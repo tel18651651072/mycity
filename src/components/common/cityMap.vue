@@ -1,7 +1,9 @@
 <template>
     <div class="cityMap-wrapper">
         <transition name="slide-fade">
+
             <div class="cityMap-slider" ref="cityMapSlider" v-show="cityMapshow">
+                 <input class="search" placehoder="搜索城市" v-model="city"/>
                 <h4 class="cityMap-banner">热门城市</h4>
                 <div class="starCity-line" v-for="(item,starCityindex) in starCity" @click="starCityClick(starCityindex)">{{item.cityName}}</div>
                 <div v-for="(item,index) in alphabet" class="alphabetBlock">
@@ -27,7 +29,8 @@
             return {
                 starCity: newCity.starCity,          // 明星城市
                 cityData: newCity.cityData,          // 城市数据
-                alphabet: alphabet                    // 字母表
+                alphabet: alphabet,
+                city: ' '                    // 字母表
             }
         },
         computed: {
@@ -41,11 +44,31 @@
                 default: false
             }
         },
+        watch:{
+             city:function(newcity) {
+                    var citytrimed = newcity.trim()
+                    if (citytrimed !== ''){
+                        var citycap = citytrimed.substring(0,1).toUpperCase()
+                        console.log(citycap)
+                        var cityIndex = alphabet.findIndex(function(el,index,arr){
+                            return el===citycap;
+                        })
+                        console.log(cityIndex);
+                        if (cityIndex){
+                        this.IndexClick(cityIndex);
+                        }
+                    }
+            }
+        },
         methods: {
             // 点击字母索引到相应字母开头的城市
             IndexClick(index) {
+                // console.log(index);
+                var self = this
                 var alphabetIndex = document.querySelectorAll('.alphabetBlock')
-                this.$refs.cityMapSlider.scrollTop = alphabetIndex[index].offsetTop
+                self.$refs.cityMapSlider.scrollTop = alphabetIndex[index].offsetTop
+                console.log(self.$refs.cityMapSlider.scrollTop)
+                console.log(alphabetIndex[index].offsetTop)
             },
             // 获取明星城市的索引值
             starCityClick(starCityindex) {
@@ -81,6 +104,13 @@
             .starCity-line {
                 padding: .25rem .5rem;
                 border-bottom: .5px solid #ddd;
+            }
+            .search{
+                position:fixed;
+                top:0;
+                width:100%;
+                height:40px;
+                background:orange;
             }
         }
         .cityMap-navbar {
